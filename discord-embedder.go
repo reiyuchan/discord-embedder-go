@@ -28,46 +28,46 @@ func New(client *http.Client) *DiscordEmbedder {
 	return &DiscordEmbedder{client: client}
 }
 
-func (de *DiscordEmbedder) UploadToCatBox(path string) (interface{}, error) {
+func (de *DiscordEmbedder) UploadToCatBox(path string) (string, error) {
 	_, err := os.Stat(path)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer file.Close()
 	_ = writer.WriteField("reqtype", "fileupload")
 	wfile, err := writer.CreateFormFile("fileToUpload", path)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	io.Copy(wfile, file)
 	writer.Close()
 	req, err := http.NewRequest(http.MethodPost, catboxURL, &buf)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	res, err := de.client.Do(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer res.Body.Close()
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	return string(data), err
 }
 
-func (de *DiscordEmbedder) GetURL(videoURL string) (interface{}, error) {
+func (de *DiscordEmbedder) GetURL(videoURL string) (string, error) {
 	paURL, err := url.ParseRequestURI(videoURL)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
@@ -75,22 +75,22 @@ func (de *DiscordEmbedder) GetURL(videoURL string) (interface{}, error) {
 	writer.Close()
 	req, err := http.NewRequest(http.MethodPost, baseURL, &buf)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	res, err := de.client.Do(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer res.Body.Close()
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	regex := regexp.MustCompile("<pre>(.*)</pre>")
 	match := regex.FindStringSubmatch(string(data))
 	if len(match) < 1 {
-		return nil, fmt.Errorf("no match found")
+		return "", fmt.Errorf("no match found")
 	}
 	return match[1], nil
 }
