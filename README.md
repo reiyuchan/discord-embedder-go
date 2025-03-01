@@ -14,7 +14,10 @@ go get -u https://github.com/reiyuchan/discord-video-embedder-go
 ### Example:
 ```go
 package main
-
+import (
+	"fmt"
+	"https://github.com/reiyuchan/discord-video-embedder-go"
+)
 func main() {
 	 c := discordembedder.New(nil)
 	 fURL, err := c.UploadToCatBox("file.mp4")
