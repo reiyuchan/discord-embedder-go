@@ -89,7 +89,7 @@ func (de *DiscordEmbedder) GetURL(videoURL string) (string, error) {
 	}
 	regex := regexp.MustCompile("<pre>(.*)</pre>")
 	match := regex.FindStringSubmatch(string(data))
-	if len(match) < 1 {
+	if len(match) <= 1 {
 		return "", fmt.Errorf("no match found")
 	}
 	return match[1], nil
