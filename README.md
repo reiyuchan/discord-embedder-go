@@ -17,7 +17,8 @@ package main
 
 import (
 	"fmt"
-	"https://github.com/reiyuchan/discord-video-embedder-go"
+
+	discordvideoembedder "github.com/reiyuchan/discord-video-embedder-go"
 )
 
 func main() {
