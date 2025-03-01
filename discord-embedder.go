@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"time"
 )
@@ -28,6 +29,7 @@ func New(client *http.Client) *DiscordEmbedder {
 	return &DiscordEmbedder{client: client}
 }
 
+// UploadToCatBox returns URL of uploaded file
 func (de *DiscordEmbedder) UploadToCatBox(path string) (string, error) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -64,10 +66,16 @@ func (de *DiscordEmbedder) UploadToCatBox(path string) (string, error) {
 	return string(data), err
 }
 
+// GetURL returns the generated embed URL
 func (de *DiscordEmbedder) GetURL(videoURL string) (string, error) {
 	paURL, err := url.ParseRequestURI(videoURL)
 	if err != nil {
 		return "", err
+	}
+	ext := filepath.Ext(paURL.String())
+	filter := map[string]bool{".hevc": true, ".h265": true, ".mkv": true, "": true}
+	if filter[ext] {
+		return "", fmt.Errorf("file extension not supported")
 	}
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
@@ -90,7 +98,7 @@ func (de *DiscordEmbedder) GetURL(videoURL string) (string, error) {
 	regex := regexp.MustCompile("<pre>(.*)</pre>")
 	match := regex.FindStringSubmatch(string(data))
 	if len(match) <= 1 {
-		return "", fmt.Errorf("no match found")
+		return "", fmt.Errorf("no match found due to request failure")
 	}
 	return match[1], nil
 }
