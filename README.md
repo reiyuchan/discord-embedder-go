@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	 c := discordembedder.New(nil)
+	 c := discordvideoembedder.New(nil)
 	 fURL, err := c.UploadToCatBox("file.mp4")
 	 if err != nil {
 	 	fmt.Println(err)
