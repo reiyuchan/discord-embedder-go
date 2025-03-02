@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -72,9 +73,16 @@ func (de *DiscordEmbedder) GetURL(videoURL string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	ext := filepath.Ext(paURL.String())
-	filter := map[string]bool{".hevc": true, ".h265": true, ".mkv": true, "": true}
-	if filter[ext] {
+	ext := strings.ToLower(filepath.Ext(paURL.String()))
+	filter := map[string]bool{
+		".mp4":  true,
+		".avi":  true,
+		".mov":  true,
+		".wmv":  true,
+		".flv":  true,
+		".webm": true,
+	}
+	if !filter[ext] || ext == "" {
 		return "", fmt.Errorf("file extension not supported")
 	}
 	var buf bytes.Buffer
