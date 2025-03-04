@@ -8,7 +8,7 @@ the wrapper uses:
 
 ### Get Module
 ```sh
-go get -u https://github.com/reiyuchan/discord-video-embedder-go 
+go get -u github.com/reiyuchan/discord-video-embedder-go 
 ```
 
 ### Example:
